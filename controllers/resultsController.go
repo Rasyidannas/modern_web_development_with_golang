@@ -22,7 +22,7 @@ func NewResultsController(resultsService *services.ResultsService) *ResultsContr
 	}
 }
 
-func (rh ResultsController) CreateResult(ctx *gin,Context) {
+func (rh ResultsController) CreateResult(ctx *gin.Context) {
 	body, err := io.ReadAll(ctx.Request.Body)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func (rh ResultsController) CreateResult(ctx *gin,Context) {
 	response, responseErr := rh.resultsService.CreateResult(&result)
 
 	if responseErr != nil {
-		ctx.JSON(responseErr.Statys , responseErr)
+		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
 

@@ -15,7 +15,7 @@ type ResultsService struct {
 	runnersRepository *repositories.RunnersRepository
 }
 
-func NewResutlsService(
+func NewResultsService(
 	resultsRepository *repositories.ResultsRepository,
 	runnersRepository *repositories.RunnersRepository
 ) *ResultsService {
@@ -53,13 +53,13 @@ func (rs ResultsService) CreateResult(result *models.Result) (*models.Result, *m
 			Status: http.StatusBadRequest,
 		}
 	}
-	
+
 	currentYear := time.Now().Year()
 	if result.Year < 0 || result.Year > currentYear {
-		return nil, &models.ResultsService {
+		return nil, &models.ResponseError{
 			Message: "Invalid year",
 			Status: http.StatusBadRequest,
-		} 
+		}
 	}
 
 	raceResult, err := parseRaceResult(result.RaceResult)
@@ -75,9 +75,9 @@ func (rs ResultsService) CreateResult(result *models.Result) (*models.Result, *m
 		return nil, ResponseErr
 	}
 
-	runner, ResponseErr := rs.runnersRepository.GetRunner(result.RunnerID)
-	if ResponseErr != nil {
-		return nil, ResponseErr
+	runner, responseErr := rs.runnersRepository.GetRunner(result.RunnerID)
+	if responseErr != nil {
+		return responseErr
 	}
 
 	if runner == nil {
@@ -115,8 +115,8 @@ func (rs ResultsService) CreateResult(result *models.Result) (*models.Result, *m
 				return nil, &models.ResponseError {
 					Message: "Failed to parse " +"Season best",
 					Status: http.StatusInternalServerError,
+					}
 				}
-			}
 
 			if raceResult < seasonBest {
 				runner.SeasonBest = result.RaceResult
@@ -147,7 +147,7 @@ func (rs ResultsService) DeleteResult(resultId string) *models.ResponseError {
 
 	runner, responseErr := rs.runnersRepository.GetRunner(result.RunnerID)
 	if responseErr != nil {
-		retrun responseErr
+		return responseErr
 	}
 
 	// Checking if the deleted result is personal best for the runner
@@ -162,7 +162,7 @@ func (rs ResultsService) DeleteResult(resultId string) *models.ResponseError {
 	// Checking if the deleted result is season best for the runner
 	currentYear := time.Now().Year()
 	if runner.SeasonBest == result.RaceResult && result.Year == currentYear {
-		seasonBest, responseErr := rs.resultsRepository.getseasonBestResults(result.RunnerID, result.Year)
+		seasonBest, responseErr := rs.resultsRepository.getSeasonBestResults(result.RunnerID, result.Year)
 		if responseErr != nil {
 			return responseErr
 		}
