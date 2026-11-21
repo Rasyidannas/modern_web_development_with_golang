@@ -23,7 +23,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	resultRepository := repositories.NewResultsRepository(dbHandler)
 
 	runnersService := services.NewRunnersService(runnersRepository, resultRepository)
-	resultsService := services.NewResultsService(resultsRepository, runnersRepository)
+	resultsService := services.NewResultsService(resultRepository, runnersRepository)
 
 	runnersController := controllers.NewRunnersController(runnersService)
 	resultsController := controllers.NewResultsController(resultsService)
@@ -33,9 +33,9 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.PUT("/runner", runnersController.UpdateRunner)
 	router.DELETE("/runner/:id", runnersController.DeleteRunner)
 	router.GET("/runner/:id", runnersController.GetRunner)
-	router.GET("/runer", runnersController.GetRunnersBatch)
+	router.GET("/runner", runnersController.GetRunnersBatch)
 	router.POST("/result", resultsController.CreateResult)
-	router.DELETE("/result/:id". resultsController.DeleteResult)
+	router.DELETE("/result/:id", resultsController.DeleteResult)
 
 	return HttpServer{
 		config: config,

@@ -13,7 +13,7 @@ import (
 )
 
 type RunnersController struct {
-	runnersService *services.runnersService
+	runnersService *services.RunnersService
 }
 
 func NewRunnersController(runnersService *services.RunnersService) *RunnersController {
@@ -116,10 +116,10 @@ func (rh RunnersController) GetRunner(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (rh RunnersController) GetRunnerBatch(ctx *gin.Context) {
+func (rh RunnersController) GetRunnersBatch(ctx *gin.Context) {
 	params := ctx.Request.URL.Query()
 	country := params.Get("country")
-	year := param.Get("year")
+	year := params.Get("year")
 
 	response, responseErr := rh.runnersService.GetRunnersBatch(country, year)
 

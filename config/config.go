@@ -6,7 +6,7 @@ import (
 )
 
 func InitConfig(fileName string) *viper.Viper {
-	config := new()
+	config := viper.New()
 	config.SetConfigName(fileName)
 	config.AddConfigPath(".")
 	config.AddConfigPath("$HOME")

@@ -10,15 +10,14 @@ import (
 	"time"
 )
 
-type RunersService struct {
+type RunnersService struct {
 	runnersRepository *repositories.RunnersRepository
 	resultsRepository *repositories.ResultsRepository
 }
 
 func NewRunnersService(
 	runnersRepository *repositories.RunnersRepository, 
-	resultsRepository *repositories.ResultsRepository
-) *RunnersService {
+	resultsRepository *repositories.ResultsRepository) *RunnersService {
 	return &RunnersService{
 		runnersRepository: runnersRepository,
 		resultsRepository: resultsRepository,
@@ -41,12 +40,12 @@ func (rs RunnersService) UpdateRunner(runner *models.Runner) *models.ResponseErr
 		return responseErr
 	}
 
-	responseErr := validateRunner(runner)
+	responseErr = validateRunner(runner)
 	if responseErr != nil {
 		return responseErr
 	}
 
-	return rs.runnersRespository.UpdateRunner(runner)
+	return rs.runnersRepository.UpdateRunner(runner)
 }
 
 func (rs RunnersService) DeleteRunner(runnerId string) *models.ResponseError {
@@ -59,7 +58,7 @@ func (rs RunnersService) DeleteRunner(runnerId string) *models.ResponseError {
 	return rs.runnersRepository.DeleteRunner(runnerId)
 }
 
-func (rs RunnerService) GetRunner(runnerId string) (*models.Runner, *models.ResponseError) {
+func (rs RunnersService) GetRunner(runnerId string) (*models.Runner, *models.ResponseError) {
 	responseErr := validateRunnerId(runnerId)
 	if responseErr != nil {
 		return nil, responseErr
@@ -76,7 +75,7 @@ func (rs RunnerService) GetRunner(runnerId string) (*models.Runner, *models.Resp
 	}
 
 	runner.Results = results
-	
+
 	return runner, nil
 }
 
@@ -104,7 +103,7 @@ func (rs RunnersService) GetRunnersBatch(country string, year string) ([]*models
 
 		currentYear := time.Now().Year()
 		if intYear < 0 || intYear > currentYear {
-			retrun nil, &models.ResponseError {
+			return nil, &models.ResponseError {
 				Message: "Invalid year",
 				Status: http.StatusBadRequest,
 			}
@@ -150,9 +149,9 @@ func validateRunner(runner *models.Runner) *models.ResponseError {
 
 func validateRunnerId(runnerId string) *models.ResponseError {
 	if runnerId == "" {
-		return &modles.ResponseError{
-			Message: "Invalid runenr ID",
-			Status: http.StatusBadRequest,
+		return &models.ResponseError{
+			Message: "Invalid runner ID",
+			Status:  http.StatusBadRequest,
 		}
 	}
 
